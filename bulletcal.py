@@ -33,7 +33,7 @@ import xml.etree.ElementTree as ET
 ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
 
 template = 'resources/template.svg'
-abbr = {'Birthday': 'B:', 'Married': 'A:'}
+abbr = {'Birthday': 'B', 'Married': 'A'}
 now = datetime.date.today()
 
 def main():
