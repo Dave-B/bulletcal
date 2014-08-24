@@ -37,17 +37,18 @@ import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 def main():
-    dates = get_dates()
-    #pp.pprint(dates)
-
     events = get_events()
-    pp.pprint(events)
+    #pp.pprint(events)
 
-    #for month_num, details in dates.iteritems():
+    dates = get_dates(events)
+    pp.pprint(dates)
+
+#    for month_num, details in dates.iteritems():
+#        print details
 
     return 0
 
-def get_dates():
+def get_dates(events):
     now = datetime.date.today()
     c = calendar.Calendar()
     dates = {}
@@ -55,6 +56,7 @@ def get_dates():
     year = now.year
     months = range(1, 13)
     months = range(8, 13)
+    months = range(8, 9)
     for month_number in months:
         month_cal = c.itermonthdays(year, month_number)
         month = datetime.date(year, month_number, 1)
@@ -65,8 +67,11 @@ def get_dates():
         for day_number in month_cal:
             if day_number:
                 day = datetime.date(year, month_number, day_number)
-                thismonth['days'][day_number] = day.strftime('%d %a')[:-2]
-                #print day.strftime('%d %a')[:-2]
+                thismonth['days'][day_number] = {'label': day.strftime('%d %a')[:-2]}
+                if (month_number in events):
+                    #print events[month_number]
+                    if (day_number in events[month_number]):
+                        thismonth['days'][day_number]['events'] = events[month_number][day_number]
 
         dates[month_number] = (thismonth)
 
@@ -78,14 +83,22 @@ def get_events():
     events = {}
     for row in rdr:
         date_split = row['date'].split('-')
-        row['date_split'] = date_split
-        if not(date_split[1] in events):
-            events[date_split[1]] = {}
+        del row['date']
+        date = {'month': int(date_split[1]),
+                'day': int(date_split[2])}
+        try:
+            date['year'] = int(date_split[0])
+        except:
+            pass
+        row['date'] = date
 
-        if not(date_split[2] in events[date_split[1]]):
-            events[date_split[1]][date_split[2]] = []
+        if not(date['month'] in events):
+            events[date['month']] = {}
 
-        events[date_split[1]][date_split[2]].append(row)
+        if not(date['day'] in events[date['month']]):
+            events[date['month']][date['day']] = []
+
+        events[date['month']][date['day']].append(row)
 
     return events
 
