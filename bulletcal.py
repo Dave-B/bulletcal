@@ -1,34 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  test.py
-#  
-#  Copyright 2014 david <david@david-TECRA-A9>
-#  
+#  bulletcal.py
+#
+#  Copyright 2014 David Balch <david@balch.co.uk>
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#  
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#  
-#  
-
-# https://docs.python.org/2/library/calendar.html
-# http://pymotw.com/2/calendar/
-
-#import svgwrite
-#import pysvg
-
-# https://docs.python.org/2/library/datetime.html
+#
+#
 
 import datetime
 import calendar
@@ -59,9 +51,8 @@ def main():
 
 def date_plot(dates):
     # Write out calendar as SVG files.
-
-    # Two months per page.
     for page_num in range(1, 13, 2):
+        # Two months per page.
         page_name = "out/page_%d-%d.svg" % (page_num, page_num + 1)
         page = ET.parse(template)
         root = page.getroot()
@@ -103,7 +94,6 @@ def svg_month(month_details, second_page = False):
     text_offset_v = text_offset_v + 5
     for day_num, day_details in month_details['days'].iteritems():
         text_offset_v = text_offset_v + 5
-        #print day_details
         day = ET.Element('svg:text', {'x': '5',
                                       'y': str(text_offset_v),
                                       'font-size': text_size,
@@ -112,7 +102,6 @@ def svg_month(month_details, second_page = False):
         if 'events' in day_details:
             event_list = []
             for event in day_details['events']:
-                #print event[]
                 event_txt = abbr[event['event']]
                 if ('year' in event['date']):
                     age = now.year - event['date']['year']
@@ -132,7 +121,6 @@ def date_list(dates):
     for month_num, month_details in dates.iteritems():
         print month_details['name']
         for day_num, day_details in month_details['days'].iteritems():
-            #print day_details
             o = day_details['label'] + ': '
             if 'events' in day_details:
                 for event in day_details['events']:
@@ -161,7 +149,6 @@ def get_dates(events):
                 day = datetime.date(year, month_number, day_number)
                 thismonth['days'][day_number] = {'label': day.strftime('%d %a')[:-2]}
                 if (month_number in events):
-                    #print events[month_number]
                     if (day_number in events[month_number]):
                         thismonth['days'][day_number]['events'] = events[month_number][day_number]
 
