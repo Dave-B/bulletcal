@@ -33,6 +33,7 @@
 import datetime
 import calendar
 import csv
+import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -50,7 +51,7 @@ def main():
     #pp.pprint(dates)
 
     #date_list(dates)
-    tree = ET.parse('template.svg')
+    tree = ET.parse('resources/template.svg')
     date_plot(dates, tree)
 
     return 0
@@ -59,18 +60,24 @@ def main():
 def date_plot(dates, svg):
     # Write out calendar as SVG files.
 
-    #for month_num, month_details in dates.iteritems():
-    month_details = dates[8]
+    # Two months per page.
+    for page_num in range(1, 13, 2):
+        page_name = "out/page_%d-%d.svg" % (page_num, page_num + 1)
+        page = copy.copy(svg)
+        root = page.getroot()
 
-    root = svg.getroot()
-    root.append(svg_month(month_details))
+        root.append(svg_month(dates[page_num]))
+        #root.append(svg_month(dates[page_num + 1]))
 
-    svg.write('out.svg')
+        page.write(page_name)
+        del page
+
 
 def svg_month(month_details):
     # Build month in SVG
     text_offset = 5
     text_size = '5mm'
+    text_font = 'Courier'
     g = ET.Element('svg:g', {'x': '5mm',
                              'y': str(text_offset)+ 'mm'})
 
@@ -82,7 +89,8 @@ def svg_month(month_details):
 
     header = ET.Element('svg:text', {'x': '5mm',
                                      'y': str(text_offset)+ 'mm',
-                                     'height': text_size})
+                                     #'height': text_size,
+                                     'font-family': text_font})
     header.text = month_details['name']
     g.append(header)
 
@@ -90,7 +98,9 @@ def svg_month(month_details):
         text_offset = text_offset +5
         #print day_details
         day = ET.Element('svg:text', {'x': '5mm',
-                                      'y': str(text_offset) + 'mm'})
+                                      'y': str(text_offset) + 'mm',
+                                      #'height': text_size,
+                                      'font-family': text_font})
         o = day_details['label'] + ': '
         if 'events' in day_details:
             for event in day_details['events']:
@@ -100,8 +110,8 @@ def svg_month(month_details):
 
         g.append(day)
 
-
     return g
+
 
 def date_list(dates):
     # Print out calendar in text.
@@ -126,7 +136,6 @@ def get_dates(events):
 
     year = now.year
     months = range(1, 13)
-    months = range(8, 13)
     for month_number in months:
         month_cal = c.itermonthdays(year, month_number)
         month = datetime.date(year, month_number, 1)
@@ -146,6 +155,7 @@ def get_dates(events):
         dates[month_number] = (thismonth)
 
     return dates
+
 
 def get_events():
     # Load CSV of events.
@@ -172,6 +182,7 @@ def get_events():
         events[date['month']][date['day']].append(row)
 
     return events
+
 
 if __name__ == '__main__':
     main()
