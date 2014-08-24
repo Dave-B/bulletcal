@@ -40,10 +40,9 @@ pp = pprint.PrettyPrinter(indent=4)
 import xml.etree.ElementTree as ET
 ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
 
-bell = 'E004'
-candle = 'E006'
 template = 'resources/template.svg'
 abbr = {'Birthday': 'B:', 'Married': 'A:'}
+now = datetime.date.today()
 
 def main():
     events = get_events()
@@ -71,7 +70,6 @@ def date_plot(dates):
         root.append(svg_month(dates[page_num + 1], True))
 
         page.write(page_name)
-        del page
 
 
 def svg_month(month_details, second_page = False):
@@ -114,7 +112,13 @@ def svg_month(month_details, second_page = False):
         if 'events' in day_details:
             event_list = []
             for event in day_details['events']:
-                event_list.append(abbr[event['event']] + event['nickname'])
+                #print event[]
+                event_txt = abbr[event['event']]
+                if ('year' in event['date']):
+                    age = now.year - event['date']['year']
+                    event_txt = event_txt + str(age)
+                event_txt = event_txt + event['nickname']
+                event_list.append(event_txt)
             o = o + ','.join(event_list)
         day.text = o
 
@@ -140,7 +144,6 @@ def date_list(dates):
 
 def get_dates(events):
     # Generate list of calendar dates, incorporating events.
-    now = datetime.date.today()
     c = calendar.Calendar()
     dates = {}
 
