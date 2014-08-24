@@ -51,6 +51,7 @@ def main():
     #pp.pprint(dates)
 
     #date_list(dates)
+
     tree = ET.parse('resources/template.svg')
     date_plot(dates, tree)
 
@@ -67,39 +68,45 @@ def date_plot(dates, svg):
         root = page.getroot()
 
         root.append(svg_month(dates[page_num]))
-        #root.append(svg_month(dates[page_num + 1]))
+        root.append(svg_month(dates[page_num + 1], True))
 
         page.write(page_name)
         del page
 
 
-def svg_month(month_details):
+def svg_month(month_details, second_page = False):
     # Build month in SVG
-    text_offset = 5
-    text_size = '5mm'
+    offset_v = 10
+    offset_h = 10
+    if second_page:
+        offset_h = 150
+
+    the_id = month_details['name'].split(' ')[0]
+    text_size = '5'
     text_font = 'Courier'
-    g = ET.Element('svg:g', {'x': '5mm',
-                             'y': str(text_offset)+ 'mm'})
 
+    g = ET.Element('svg:g', {
+                             'transform': "translate(%d,%d)" % (offset_h, offset_v),
+                             'id': the_id})
 
-    rect = ET.Element('svg:rect', {'width': '136mm',
-                                   'height': '196mm',
+    rect = ET.Element('svg:rect', {'width': '135',
+                                   'height': '190',
                                    'fill': 'url(#grid)'})
     g.append(rect)
 
-    header = ET.Element('svg:text', {'x': '5mm',
-                                     'y': str(text_offset)+ 'mm',
-                                     #'height': text_size,
+    header = ET.Element('svg:text', {'x': '5',
+                                     'y': str(offset_v),
+                                      'height': text_size,
                                      'font-family': text_font})
     header.text = month_details['name']
     g.append(header)
 
     for day_num, day_details in month_details['days'].iteritems():
-        text_offset = text_offset +5
+        offset_v = offset_v +5
         #print day_details
-        day = ET.Element('svg:text', {'x': '5mm',
-                                      'y': str(text_offset) + 'mm',
-                                      #'height': text_size,
+        day = ET.Element('svg:text', {'x': '5',
+                                      'y': str(offset_v),
+                                      'height': text_size,
                                       'font-family': text_font})
         o = day_details['label'] + ': '
         if 'events' in day_details:
