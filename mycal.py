@@ -33,14 +33,17 @@
 import datetime
 import calendar
 import csv
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 def main():
-    yeardates = get_dates()
+    dates = get_dates()
+    #pp.pprint(dates)
 
-    for month_num, details in yeardates.iteritems():
-        print month_num
-        print details
-        print ''
+    events = get_events()
+    pp.pprint(events)
+
+    #for month_num, details in dates.iteritems():
 
     return 0
 
@@ -68,6 +71,23 @@ def get_dates():
         dates[month_number] = (thismonth)
 
     return dates
+
+def get_events():
+    fp = file('events.csv')
+    rdr = csv.DictReader(filter(lambda row: row[0]!='#', fp))
+    events = {}
+    for row in rdr:
+        date_split = row['date'].split('-')
+        row['date_split'] = date_split
+        if not(date_split[1] in events):
+            events[date_split[1]] = {}
+
+        if not(date_split[2] in events[date_split[1]]):
+            events[date_split[1]][date_split[2]] = []
+
+        events[date_split[1]][date_split[2]].append(row)
+
+    return events
 
 if __name__ == '__main__':
     main()
