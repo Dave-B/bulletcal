@@ -42,6 +42,7 @@ ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
 
 bell = 'E004'
 candle = 'E006'
+template = 'resources/template.svg'
 
 def main():
     events = get_events()
@@ -51,20 +52,18 @@ def main():
     #pp.pprint(dates)
 
     #date_list(dates)
-
-    tree = ET.parse('resources/template.svg')
-    date_plot(dates, tree)
+    date_plot(dates)
 
     return 0
 
 
-def date_plot(dates, svg):
+def date_plot(dates):
     # Write out calendar as SVG files.
 
     # Two months per page.
     for page_num in range(1, 13, 2):
         page_name = "out/page_%d-%d.svg" % (page_num, page_num + 1)
-        page = copy.copy(svg)
+        page = ET.parse(template)
         root = page.getroot()
 
         root.append(svg_month(dates[page_num]))
