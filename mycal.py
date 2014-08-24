@@ -43,6 +43,7 @@ ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
 bell = 'E004'
 candle = 'E006'
 template = 'resources/template.svg'
+abbr = {'Birthday': 'B:', 'Married': 'A:'}
 
 def main():
     events = get_events()
@@ -109,11 +110,12 @@ def svg_month(month_details, second_page = False):
                                       'y': str(text_offset_v),
                                       'font-size': text_size,
                                       'font-family': text_font})
-        o = day_details['label'] + ': '
+        o = day_details['label'] + ' '
         if 'events' in day_details:
+            event_list = []
             for event in day_details['events']:
-                #print event
-                    o = o + event['event'] + ': ' + event['nickname']
+                event_list.append(abbr[event['event']] + event['nickname'])
+            o = o + ','.join(event_list)
         day.text = o
 
         g.append(day)
