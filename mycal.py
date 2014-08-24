@@ -41,12 +41,25 @@ def main():
     #pp.pprint(events)
 
     dates = get_dates(events)
-    pp.pprint(dates)
+    #pp.pprint(dates)
 
-#    for month_num, details in dates.iteritems():
-#        print details
+    date_list(dates)
 
     return 0
+
+def date_list(dates):
+    for month_num, month_details in dates.iteritems():
+        print month_details['name']
+        for day_num, day_details in month_details['days'].iteritems():
+            #print day_details
+            o = day_details['label'] + ': '
+            if 'events' in day_details:
+                for event in day_details['events']:
+                    #print event
+                    o = o + event['event'] + ': ' + event['nickname']
+            print o
+        print ''
+
 
 def get_dates(events):
     now = datetime.date.today()
@@ -56,7 +69,6 @@ def get_dates(events):
     year = now.year
     months = range(1, 13)
     months = range(8, 13)
-    months = range(8, 9)
     for month_number in months:
         month_cal = c.itermonthdays(year, month_number)
         month = datetime.date(year, month_number, 1)
