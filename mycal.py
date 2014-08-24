@@ -36,6 +36,12 @@ import csv
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
+import xml.etree.ElementTree as ET
+ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
+
+bell = 'E004'
+candle = 'E006'
+
 def main():
     events = get_events()
     #pp.pprint(events)
@@ -43,11 +49,62 @@ def main():
     dates = get_dates(events)
     #pp.pprint(dates)
 
-    date_list(dates)
+    #date_list(dates)
+    tree = ET.parse('template.svg')
+    date_plot(dates, tree)
 
     return 0
 
+
+def date_plot(dates, svg):
+    # Write out calendar as SVG files.
+
+    #for month_num, month_details in dates.iteritems():
+    month_details = dates[8]
+
+    root = svg.getroot()
+    root.append(svg_month(month_details))
+
+    svg.write('out.svg')
+
+def svg_month(month_details):
+    # Build month in SVG
+    text_offset = 5
+    text_size = '5mm'
+    g = ET.Element('svg:g', {'x': '5mm',
+                             'y': str(text_offset)+ 'mm'})
+
+
+    rect = ET.Element('svg:rect', {'width': '136mm',
+                                   'height': '196mm',
+                                   'fill': 'url(#grid)'})
+    g.append(rect)
+
+    header = ET.Element('svg:text', {'x': '5mm',
+                                     'y': str(text_offset)+ 'mm',
+                                     'height': text_size})
+    header.text = month_details['name']
+    g.append(header)
+
+    for day_num, day_details in month_details['days'].iteritems():
+        text_offset = text_offset +5
+        #print day_details
+        day = ET.Element('svg:text', {'x': '5mm',
+                                      'y': str(text_offset) + 'mm'})
+        o = day_details['label'] + ': '
+        if 'events' in day_details:
+            for event in day_details['events']:
+                #print event
+                    o = o + event['event'] + ': ' + event['nickname']
+        day.text = o
+
+        g.append(day)
+
+
+    return g
+
 def date_list(dates):
+    # Print out calendar in text.
     for month_num, month_details in dates.iteritems():
         print month_details['name']
         for day_num, day_details in month_details['days'].iteritems():
@@ -62,6 +119,7 @@ def date_list(dates):
 
 
 def get_dates(events):
+    # Generate list of calendar dates, incorporating events.
     now = datetime.date.today()
     c = calendar.Calendar()
     dates = {}
@@ -90,6 +148,7 @@ def get_dates(events):
     return dates
 
 def get_events():
+    # Load CSV of events.
     fp = file('events.csv')
     rdr = csv.DictReader(filter(lambda row: row[0]!='#', fp))
     events = {}
