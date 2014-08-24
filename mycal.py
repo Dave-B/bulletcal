@@ -80,6 +80,7 @@ def svg_month(month_details, second_page = False):
     offset_h = 10
     if second_page:
         offset_h = 150
+    text_offset_v = 9
 
     the_id = month_details['name'].split(' ')[0]
     text_size = '5'
@@ -95,18 +96,19 @@ def svg_month(month_details, second_page = False):
     g.append(rect)
 
     header = ET.Element('svg:text', {'x': '5',
-                                     'y': str(offset_v),
-                                      'height': text_size,
+                                     'y': str(text_offset_v),
+                                      'font-size': text_size,
                                      'font-family': text_font})
     header.text = month_details['name']
     g.append(header)
 
+    text_offset_v = text_offset_v + 5
     for day_num, day_details in month_details['days'].iteritems():
-        offset_v = offset_v +5
+        text_offset_v = text_offset_v + 5
         #print day_details
         day = ET.Element('svg:text', {'x': '5',
-                                      'y': str(offset_v),
-                                      'height': text_size,
+                                      'y': str(text_offset_v),
+                                      'font-size': text_size,
                                       'font-family': text_font})
         o = day_details['label'] + ': '
         if 'events' in day_details:
