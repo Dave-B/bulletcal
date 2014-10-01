@@ -26,10 +26,12 @@ import datetime
 import calendar
 import csv
 import copy
+import os
 
 import xml.etree.ElementTree as ET
 ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
 
+outputdir = 'out'
 template = 'resources/template.svg'
 abbr = {'Birthday': 'B', 'Married': 'A'}
 now = datetime.date.today()
@@ -43,10 +45,14 @@ def main():
 
 
 def date_plot(dates):
+    # Ensure we have an output dir.
+    if not os.path.exists(outputdir):
+        os.makedirs(outputdir)
+
     # Write out calendar as SVG files.
     for page_num in range(1, 13, 2):
         # Two months per page.
-        page_name = "out/page_%d-%d.svg" % (page_num, page_num + 1)
+        page_name = "%s/page_%d-%d.svg" % (outputdir, page_num, page_num + 1)
         page = ET.parse(template)
         root = page.getroot()
 
