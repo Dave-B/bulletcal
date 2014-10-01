@@ -26,8 +26,6 @@ import datetime
 import calendar
 import csv
 import copy
-import pprint
-pp = pprint.PrettyPrinter(indent=4)
 
 import xml.etree.ElementTree as ET
 ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
@@ -38,12 +36,7 @@ now = datetime.date.today()
 
 def main():
     events = get_events()
-    #pp.pprint(events)
-
     dates = get_dates(events)
-    #pp.pprint(dates)
-
-    #date_list(dates)
     date_plot(dates)
 
     return 0
