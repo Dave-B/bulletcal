@@ -33,13 +33,18 @@ ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("-e", "--events", default="events.csv", help="CSV file of repeating events to include in calendars; columns: date,name,nickname,event.")
-parser.add_argument("-o", "--outputdir", default="out", help="Location to save calendar files.")
+parser.add_argument("-e", "--events", default="events.csv", help="CSV file of repeating events to include in calendars (default: events.csv).")
+parser.add_argument("-o", "--outputdir", default="out", help="Directory to save calendar files (default: out).")
+parser.add_argument("-y", "--year", help="Year to generate calendars for (default: the current year).")
 args = parser.parse_args()
 
 template = 'resources/template.svg'
 abbr = {'Birthday': 'B', 'Married': 'A'}
-now = datetime.date.today()
+if (args.year):
+    year = int(args.year)
+else:
+    now = datetime.date.today()
+    year = now.year
 
 
 def main():
@@ -115,7 +120,7 @@ def svg_month(month_details, second_page = False):
             for event in day_details['events']:
                 event_txt = abbr[event['event']]
                 if ('year' in event['date']):
-                    age = now.year - event['date']['year']
+                    age = year - event['date']['year']
                     event_txt = event_txt + str(age)
                 event_txt = event_txt + event['nickname']
                 event_list.append(event_txt)
@@ -149,7 +154,6 @@ def get_dates(events):
     c = calendar.Calendar()
     dates = {}
 
-    year = now.year
     months = range(1, 13)
     for month_number in months:
         month_cal = c.itermonthdays(year, month_number)
