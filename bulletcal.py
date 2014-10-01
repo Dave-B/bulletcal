@@ -33,6 +33,7 @@ ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
 
 import argparse
 parser = argparse.ArgumentParser()
+parser.add_argument("-e", "--events", default="events.csv", help="CSV file of repeating events to include in calendars; columns: date,name,nickname,event.")
 parser.add_argument("-o", "--outputdir", default="out", help="Location to save calendar files.")
 args = parser.parse_args()
 
@@ -42,7 +43,11 @@ now = datetime.date.today()
 
 
 def main():
-    events = get_events()
+    if (os.path.isfile(args.events)):
+        events = get_events()
+    else:
+        events = {}
+
     dates = get_dates(events)
     date_plot(dates)
 
@@ -168,7 +173,7 @@ def get_dates(events):
 
 def get_events():
     # Load CSV of events.
-    fp = file('events.csv')
+    fp = file(args.events)
     rdr = csv.DictReader(filter(lambda row: row[0]!='#', fp))
     events = {}
     for row in rdr:
