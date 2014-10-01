@@ -69,11 +69,11 @@ def svg_month(month_details, second_page = False):
     offset_h = 10
     if second_page:
         offset_h = 150
-    text_offset_v = 9
+    text_offset_v = 9.5
 
     the_id = month_details['name'].split(' ')[0]
-    text_size = '5'
-    text_font = 'Courier'
+    text_size = '4'
+    text_font = 'Arial'
 
     g = ET.Element('svg:g', {
                              'transform': "translate(%d,%d)" % (offset_h, offset_v),
@@ -98,7 +98,9 @@ def svg_month(month_details, second_page = False):
                                       'y': str(text_offset_v),
                                       'font-size': text_size,
                                       'font-family': text_font})
-        o = day_details['label'] + ' '
+        day.text = day_details['label']
+        g.append(day)
+
         if 'events' in day_details:
             event_list = []
             for event in day_details['events']:
@@ -108,10 +110,13 @@ def svg_month(month_details, second_page = False):
                     event_txt = event_txt + str(age)
                 event_txt = event_txt + event['nickname']
                 event_list.append(event_txt)
-            o = o + ','.join(event_list)
-        day.text = o
 
-        g.append(day)
+            events = ET.Element('svg:text', {'x': '15.5',
+                                          'y': str(text_offset_v),
+                                          'font-size': text_size,
+                                          'font-family': text_font})
+            events.text = ','.join(event_list)
+            g.append(events)
 
     return g
 
