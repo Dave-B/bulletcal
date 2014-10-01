@@ -31,10 +31,15 @@ import os
 import xml.etree.ElementTree as ET
 ET.register_namespace('svg', 'http://www.w3.org/2000/svg')
 
-outputdir = 'out'
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("-o", "--outputdir", default="out", help="Location to save calendar files.")
+args = parser.parse_args()
+
 template = 'resources/template.svg'
 abbr = {'Birthday': 'B', 'Married': 'A'}
 now = datetime.date.today()
+
 
 def main():
     events = get_events()
@@ -46,13 +51,13 @@ def main():
 
 def date_plot(dates):
     # Ensure we have an output dir.
-    if not os.path.exists(outputdir):
-        os.makedirs(outputdir)
+    if not os.path.exists(args.outputdir):
+        os.makedirs(args.outputdir)
 
     # Write out calendar as SVG files.
     for page_num in range(1, 13, 2):
         # Two months per page.
-        page_name = "%s/page_%d-%d.svg" % (outputdir, page_num, page_num + 1)
+        page_name = "%s/page_%d-%d.svg" % (args.outputdir, page_num, page_num + 1)
         page = ET.parse(template)
         root = page.getroot()
 
